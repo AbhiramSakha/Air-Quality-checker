@@ -6,28 +6,43 @@ from sklearn.neighbors import KNeighborsClassifier
 
 app = Flask(__name__)
 
-# Load dataset
+# Load and clean CSV
 csv_path = os.path.join(os.path.dirname(__file__), 'AirQuality.csv')
-df = pd.read_csv(csv_path)
+df = pd.read_csv(csv_path, delimiter=';')
 
-# Clean column names (remove leading/trailing spaces)
+# Strip column names
 df.columns = [col.strip() for col in df.columns]
 
-# Debug print (for logs in Railway or other hosting)
-print("Available CSV Columns:", df.columns.tolist())
+# Rename for simplicity (optional)
+df.rename(columns={
+    'CO(GT)': 'CO',
+    'NO2(GT)': 'NO2',
+    'RH': 'Humidity'
+}, inplace=True)
 
-# Check required columns
-required_columns = ['CO', 'NO2', 'Humidity', 'Label']
+# Check for required columns
+required_columns = ['CO', 'NO2', 'Humidity']
 missing_cols = [col for col in required_columns if col not in df.columns]
-
 if missing_cols:
     raise ValueError(f"Missing required columns in CSV: {missing_cols}")
 
-# Split features and target
+# Drop rows with missing data
+df = df[required_columns].dropna()
+
+# Generate Label column (basic logic: Poor, Moderate, Good based on CO & NO2)
+def assign_label(row):
+    if row['CO'] > 5 or row['NO2'] > 100:
+        return 'Poor'
+    elif row['CO'] > 2 or row['NO2'] > 60:
+        return 'Moderate'
+    else:
+        return 'Good'
+
+df['Label'] = df.apply(assign_label, axis=1)
+
+# Prepare features and labels
 X = df[['CO', 'NO2', 'Humidity']]
 y = df['Label']
-
-# One-hot encode labels
 y_encoded = pd.get_dummies(y)
 
 # Normalize features
@@ -35,7 +50,7 @@ means = X.mean()
 stds = X.std().replace(0, 1)
 X_normalized = (X - means) / stds
 
-# Train KNN model
+# Train model
 model = KNeighborsClassifier(n_neighbors=3)
 model.fit(X_normalized, y_encoded)
 
