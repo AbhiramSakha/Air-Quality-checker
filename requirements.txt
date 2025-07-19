@@ -7,28 +7,15 @@ Flask-PyMongo==3.0.1
 python-dotenv==1.0.1
 gunicorn==23.0.0
 
-# -- Machine Learning & Data Handling --
+# -- Machine Learning & Data Processing --
 scikit-learn==1.4.1.post1
 joblib==1.3.2
 pandas==2.2.3
 numpy==1.26.4
+
+# -- Optional Plotting Support (if used) --
 matplotlib==3.8.4
 
-# -- Geolocation, Maps & API --
-folium==0.17.0
-opencage==3.0.2
-requests==2.32.3
-
-# -- Media & Image Processing --
-opencv-python==4.11.0.86
-Pillow==11.1.0
-
-# -- Audio/Text Processing --
-gTTS==2.5.4
-SpeechRecognition==3.13.0
-pyttsx3==2.98
-
 # -- Utility Libraries --
-psutil==5.9.8
-pywhatkit==5.4
+requests==2.32.3
 pyyaml==6.0.2
