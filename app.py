@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 
-df = pd.read_csv(r'C:\Users\91939\OneDrive\Desktop\Air Quality\AirQuality.csv')
+df = pd.read_csv(os.path.join(os.path.dirname(__file__), 'AirQuality.csv'))
 
 X = df[['CO', 'NO2', 'Humidity']]
 y = df['Label']
